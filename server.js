@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -45,8 +46,17 @@ app.get('/organizations', async (req, res) => {
 });
 
 app.get('/projects', async (req, res) => {
+    // 1. Fetch the projects using your new function
+    const projects = await getAllProjects();
+    
+    // 2. Log them to the console to verify it works (your assignment requirement)
+    console.log("--- Service Projects ---");
+    console.log(projects);
+      
     const title = 'Service Projects';
-    res.render('projects', { title });
+    
+    // 3. Pass the projects data to your EJS template (just like you did for organizations)
+    res.render('projects', { title, projects });
 });
 
 app.get('/categories', async (req, res) => {
