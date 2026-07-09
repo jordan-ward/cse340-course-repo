@@ -1,4 +1,12 @@
 -- ========================================
+-- Reset Database (Run this first!)
+-- ========================================
+DROP TABLE IF EXISTS project_category CASCADE;
+DROP TABLE IF EXISTS category CASCADE;
+DROP TABLE IF EXISTS service_project CASCADE;
+DROP TABLE IF EXISTS organization CASCADE;
+
+-- ========================================
 -- Organization Table
 -- ========================================
 CREATE TABLE organization (
@@ -21,8 +29,6 @@ VALUES
 -- ========================================
 -- Service Project Table
 -- ========================================
--- This line removes the table if it already exists so you can start fresh
-DROP TABLE IF EXISTS service_project;
 
 CREATE TABLE service_project (
     project_id SERIAL PRIMARY KEY,
@@ -62,3 +68,72 @@ VALUES
 (3, 'Senior Center Bingo Night', 'Hosting and calling a bingo night for residents, including providing prizes and snacks.', 'Shady Pines Senior Living', '2024-06-14'),
 (3, 'Winter Coat Collection', 'Collecting, washing, and organizing donated winter coats for underprivileged youth.', 'UnityServe Warehouse', '2024-11-01'),
 (3, 'Animal Shelter Deep Clean', 'Walking dogs, cleaning cages, and organizing supplies at the municipal animal shelter.', 'City Animal Rescue', '2024-05-22');
+
+-- ========================================
+-- Category Table
+-- ========================================
+
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- ========================================
+-- Insert sample data: Categories
+-- ========================================
+INSERT INTO category (category_name)
+VALUES
+('Environmental'),         -- ID 1
+('Educational'),           -- ID 2
+('Community Service'),     -- ID 3
+('Health and Wellness');   -- ID 4
+
+-- ========================================
+-- Project Categories (Junction Table)
+-- ========================================
+CREATE TABLE project_category (
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    
+    -- Composite Primary Key prevents duplicate associations
+    CONSTRAINT pk_project_category 
+        PRIMARY KEY (project_id, category_id),
+        
+    -- Foreign Key to service_project
+    CONSTRAINT fk_project
+        FOREIGN KEY (project_id) 
+        REFERENCES service_project(project_id)
+        ON DELETE CASCADE,
+        
+    -- Foreign Key to category
+    CONSTRAINT fk_category
+        FOREIGN KEY (category_id) 
+        REFERENCES category(category_id)
+        ON DELETE CASCADE
+);
+
+-- ========================================
+-- Insert sample data: Associating Projects
+-- ========================================
+INSERT INTO project_category (project_id, category_id)
+VALUES
+-- BrightFuture Builders (Projects 1-5) -> Community Service (3)
+(1, 3), 
+(2, 3), 
+(3, 3), 
+(4, 3), 
+(5, 3),
+
+-- GreenHarvest Growers (Projects 6-10) -> Environmental (1)
+(6, 1), 
+(7, 1), 
+(8, 1), (8, 2), -- Composting Workshop is both Environmental and Educational
+(9, 1), 
+(10, 1),
+
+-- UnityServe Volunteers (Projects 11-15) -> Mixed
+(11, 3), -- Food Drive -> Community Service
+(12, 4), -- 5K Run -> Health and Wellness
+(13, 3), -- Bingo Night -> Community Service
+(14, 3), -- Winter Coat -> Community Service
+(15, 3); -- Animal Shelter -> Community Service

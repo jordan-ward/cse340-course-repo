@@ -4,6 +4,7 @@ import path from 'path';
 import { testConnection } from './src/models/db.js';
 import { getAllOrganizations } from './src/models/organizations.js';
 import { getAllProjects } from './src/models/projects.js';
+import { getAllCategories } from './src/models/categories.js';
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -60,8 +61,20 @@ app.get('/projects', async (req, res) => {
 });
 
 app.get('/categories', async (req, res) => {
-    const title = 'Categories';
-    res.render('categories', { title });
+    try {
+        // Fetch the categories from the database
+        const categoriesData = await getAllCategories();
+        
+        // Pass the data to the view
+        res.render('categories', { 
+            title: 'Service Project Categories', 
+            categories: categoriesData 
+        });
+    } catch (error) {
+        console.error("Error loading categories route:", error);
+        // It's good practice to send an error response if the database fails
+        res.status(500).send("Error loading categories.");
+    }
 });
 
 
