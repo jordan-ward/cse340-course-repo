@@ -1,4 +1,5 @@
 import { getUpcomingProjects, getProjectDetails } from '../models/projects.js';
+import { getCategoriesByProjectId } from '../models/categories.js';
 
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
@@ -13,10 +14,18 @@ const showProjectsPage = async (req, res) => {
 const showProjectDetailsPage = async (req, res) => {
     // Extract the ID from the URL parameters
     const projectId = req.params.id;
-    const project = await getProjectDetails(projectId);
-    const title = 'Service Project Details';
     
-    res.render('project', { title, project });
+    // Fetch the project details
+    const project = await getProjectDetails(projectId);
+    
+    // NEW: Fetch the categories for this specific project
+    const categories = await getCategoriesByProjectId(projectId);
+    
+    // Optional: Update the title to be the project's actual name instead of a generic string
+    const title = project.title;
+    
+    // NEW: Pass the categories variable to the EJS template
+    res.render('project', { title, project, categories });
 };
 
 export { showProjectsPage, showProjectDetailsPage };

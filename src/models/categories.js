@@ -16,4 +16,25 @@ const getAllCategories = async () => {
     }
 };
 
-export { getAllCategories };
+const getCategoryById = async (categoryId) => {
+    const query = `
+        SELECT category_id, category_name 
+        FROM category 
+        WHERE category_id = $1;
+    `;
+    const result = await db.query(query, [categoryId]);
+    return result.rows[0];
+};
+
+const getCategoriesByProjectId = async (projectId) => {
+    const query = `
+        SELECT c.category_id, c.category_name 
+        FROM category c
+        JOIN project_category pc ON c.category_id = pc.category_id
+        WHERE pc.project_id = $1;
+    `;
+    const result = await db.query(query, [projectId]);
+    return result.rows;
+};
+
+export { getAllCategories, getCategoryById, getCategoriesByProjectId };

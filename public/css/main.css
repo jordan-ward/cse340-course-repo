@@ -295,3 +295,44 @@ a.org-link:hover {
   margin-top: 2rem;
   font-style: italic;
 }
+
+/* =========================================
+   8. CATEGORY TAGS (Badges)
+   ========================================= */
+.category-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.category-tags li {
+    /* Resets the card styling from the global lists */
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+}
+
+.category-tags li:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.category-tags li a {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+}
+
+.category-tags li a:hover {
+    background-color: var(--primary-dark);
+    color: var(--surface-color);
+}
