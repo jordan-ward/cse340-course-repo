@@ -37,10 +37,7 @@ router.get('/new-organization', showNewOrganizationForm);
 // Route to handle new organization form submission
 router.post('/new-organization', organizationValidation, processNewOrganizationForm);
 
-// Route to handle the edit organization form submission
-router.post('/edit-organization/:id', processEditOrganizationForm);
-
-// Route to handle the edit organization form submission
+// Route to handle the edit organization form submission with validation
 router.post('/edit-organization/:id', organizationValidation, processEditOrganizationForm);
 
 // Route to handle new project form submission with server-side validation
