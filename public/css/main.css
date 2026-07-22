@@ -336,3 +336,59 @@ a.org-link:hover {
     background-color: var(--primary-dark);
     color: var(--surface-color);
 }
+
+/* =========================================
+   10. FLASH MESSAGES (ALERTS)
+   ========================================= */
+.alert {
+  /* Positioning: Floats the alert in the top-center of the screen */
+  position: fixed;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; /* Ensures it sits on top of all other elements */
+  
+  /* Sizing and Layout */
+  min-width: 320px;
+  max-width: 90%;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centers the text inside the box */
+  text-align: center;
+  
+  /* Visual Appearance */
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Heavier shadow to demand attention */
+  font-weight: 600;
+}
+
+/* Success (Green) */
+.alert.success {
+  color: #065f46;
+  background-color: #ecfdf5; 
+  border-left: 6px solid #10b981; 
+}
+
+/* Error (Red) */
+.alert.error {
+  color: #991b1b;
+  background-color: #fef2f2;
+  border-left: 6px solid #ef4444; 
+}
+
+/* Warning (Amber/Yellow) */
+.alert.warning {
+  color: #92400e;
+  background-color: #fffbeb;
+  border-left: 6px solid #f59e0b; 
+}
+
+/* Info (Blue) */
+.alert.info {
+  color: var(--primary-dark); 
+  background-color: #f0f9ff;
+  border-left: 6px solid var(--primary-light); 
+}

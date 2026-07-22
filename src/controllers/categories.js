@@ -1,7 +1,6 @@
 // Import any needed model functions
-import { getAllCategories } from '../models/categories.js';
-import { getCategoryById } from '../models/categories.js';
-import { getProjectsByCategoryId } from '../models/projects.js';
+import { getAllCategories, getCategoryById, getCategoriesByProjectId, updateCategoryAssignments } from '../models/categories.js';
+import { getProjectsByCategoryId, getProjectDetails } from '../models/projects.js';
 
 // Define any controller functions
 const showCategoriesPage = async (req, res) => {
@@ -21,5 +20,32 @@ const showCategoryDetailsPage = async (req, res) => {
     res.render('category', { title, category, projects });
 };
 
+// 1. Show the Assignment Form
+const showAssignCategoriesForm = async (req, res) => {
+    const projectId = req.params.projectId;
+
+    const projectDetails = await getProjectDetails(projectId); 
+    const categories = await getAllCategories();
+    const assignedCategories = await getCategoriesByProjectId(projectId);
+
+    const title = 'Assign Categories to Project';
+
+    res.render('assign-categories', { title, projectId, projectDetails, categories, assignedCategories });
+};
+
+// 2. Process the Form Submission
+const processAssignCategoriesForm = async (req, res) => {
+    const projectId = req.params.projectId;
+    const selectedCategoryIds = req.body.categoryIds || [];
+    
+    // Ensure selectedCategoryIds is an array (even if only 1 checkbox is clicked)
+    const categoryIdsArray = Array.isArray(selectedCategoryIds) ? selectedCategoryIds : [selectedCategoryIds];
+    
+    await updateCategoryAssignments(projectId, categoryIdsArray);
+    
+    req.flash('success', 'Categories updated successfully.');
+    res.redirect(`/project/${projectId}`);
+};
+
 // Export any controller functions
-export { showCategoriesPage, showCategoryDetailsPage };
+export { showCategoriesPage, showCategoryDetailsPage, showAssignCategoriesForm, processAssignCategoriesForm };

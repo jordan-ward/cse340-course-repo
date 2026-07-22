@@ -1,8 +1,6 @@
 import db from './db.js';
 
 const getAllProjects = async () => {
-    // We use a JOIN to combine the service_project table with the organization table 
-    // based on the matching organization_id.
     const query = `
         SELECT 
             p.project_id, 
@@ -60,7 +58,7 @@ const getProjectDetails = async (id) => {
         WHERE p.project_id = $1;
     `;
     const result = await db.query(query, [id]);
-    return result.rows[0]; // Return just the single object, not the whole array
+    return result.rows[0]; 
 };
 
 const getProjectsByOrganizationId = async (organizationId) => {
@@ -91,7 +89,7 @@ const getProjectsByCategoryId = async (categoryId) => {
             p.description, 
             p.location, 
             p.project_date AS date, 
-            o.organization_id, /* <--- THIS IS THE MISSING PIECE! */
+            o.organization_id, 
             o.name AS organization_name
         FROM public.service_project p
         JOIN public.project_category pc ON p.project_id = pc.project_id
@@ -103,4 +101,25 @@ const getProjectsByCategoryId = async (categoryId) => {
     return result.rows;
 };
 
-export { getAllProjects, getUpcomingProjects, getProjectDetails, getProjectsByOrganizationId, getProjectsByCategoryId }; 
+const createProject = async (title, description, location, date, organizationId) => {
+    const query = `
+      INSERT INTO service_project (title, description, location, project_date, organization_id)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING project_id;
+    `;
+
+    const queryParams = [title, description, location, date, organizationId];
+    const result = await db.query(query, queryParams);
+
+    if (result.rows.length === 0) {
+        throw new Error('Failed to create project');
+    }
+
+    if (process.env.ENABLE_SQL_LOGGING === 'true') {
+        console.log('Created new project with ID:', result.rows[0].project_id);
+    }
+
+    return result.rows[0].project_id;
+}
+
+export { getAllProjects, getUpcomingProjects, getProjectDetails, getProjectsByOrganizationId, getProjectsByCategoryId, createProject };
