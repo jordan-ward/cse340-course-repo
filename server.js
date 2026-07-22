@@ -96,12 +96,17 @@ app.use((err, req, res, next) => {
     res.status(status).render(`errors/${template}`, context);
 });
 
-app.listen(PORT, async () => {
-  try {
-    await testConnection();
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
-  }
+const server = app.listen(PORT, async () => {
+    try {
+        await testConnection();
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
+});
+
+// Catch any server-level startup errors (e.g., port already in use)
+server.on('error', (err) => {
+    console.error('Server failed to start:', err);
 });
