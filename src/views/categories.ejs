@@ -2,12 +2,17 @@
 
 <main>
     <h1><%= title %></h1>
+    
+    <div class="actions">
+        <a href="/new-category" class="btn">Create New Category</a>
+    </div>
 
     <% if (categories && categories.length > 0) { %>
         <ul>
             <% categories.forEach(category => { %>
                 <li>
                     <a href="/category/<%= category.category_id %>"><%= category.category_name %></a>
+                    - <a href="/edit-category/<%= category.category_id %>" style="font-size: 0.9em; color: var(--text-muted);">Edit</a>
                 </li>
             <% }); %>
         </ul>

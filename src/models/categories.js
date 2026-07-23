@@ -47,17 +47,50 @@ const assignCategoryToProject = async (categoryId, projectId) => {
 };
 
 const updateCategoryAssignments = async (projectId, categoryIds) => {
-    // First, remove existing category assignments for the project
     const deleteQuery = `
         DELETE FROM project_category
         WHERE project_id = $1;
     `;
     await db.query(deleteQuery, [projectId]);
 
-    // Next, add the new category assignments
     for (const categoryId of categoryIds) {
         await assignCategoryToProject(categoryId, projectId);
     }
 };
 
-export { getAllCategories, getCategoryById, getCategoriesByProjectId, updateCategoryAssignments };
+// Add a new category to the database
+const createCategory = async (categoryName) => {
+    const query = `
+        INSERT INTO category (category_name)
+        VALUES ($1)
+        RETURNING *;
+    `;
+    const result = await db.query(query, [categoryName]);
+    return result.rows[0];
+};
+
+// Update an existing category in the database
+const updateCategory = async (categoryId, categoryName) => {
+    const query = `
+        UPDATE category
+        SET category_name = $1
+        WHERE category_id = $2
+        RETURNING *;
+    `;
+    const result = await db.query(query, [categoryName, categoryId]);
+    
+    if (result.rows.length === 0) {
+        throw new Error(`Category with ID ${categoryId} not found.`);
+    }
+    return result.rows[0];
+};
+
+// Export the new functions
+export { 
+    getAllCategories, 
+    getCategoryById, 
+    getCategoriesByProjectId, 
+    updateCategoryAssignments,
+    createCategory,
+    updateCategory 
+};
